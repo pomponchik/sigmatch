@@ -81,20 +81,3 @@ class SignatureMatcher:
         for name in self.names_of_named_args:
             result *= (name in names_of_parameters)
         return result
-
-    @classmethod
-    def is_handler(cls, function, raise_exception=True):
-        """
-        Проверка сигнатуры функции на предмет того, может она быть обработчиком Polog или нет.
-
-        Обработчик - это вызываемый объект со следующей сигнатурой (названия аргументов не обязаны совпадать):
-
-        handler(function_input, **fields)
-        """
-        matcher = cls('.')
-        try:
-            return matcher.match(function)
-        except ValueError as e:
-            if not raise_exception:
-                return False
-            raise
