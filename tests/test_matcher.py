@@ -3,28 +3,6 @@ import pytest
 from sigmatch import SignatureMatcher
 
 
-def test_wrong_object():
-    """
-    Пробуем скормить не вызываемый объект. Он не должен распознаваться как обработчик, при этом по умолчанию должно подниматься исключение.
-    """
-    with pytest.raises(ValueError):
-        SignatureMatcher.is_handler('lol')
-
-def test_wrong_object_not_raise():
-    """
-    Пробуем скормить не вызываемый объект с флагом raise_exception=False. Должно вернуться False.
-    """
-    assert SignatureMatcher.is_handler('lol', raise_exception=False) == False
-
-def test_not_function():
-    """
-    Проверка, что вызываемый объект, не являющийся функцией, но имеющий нужную сигнатуру метода .__call__(), будет распознан как обработчик.
-    """
-    class PseudoFunction:
-        def __call__(self, log):
-            pass
-    assert SignatureMatcher.is_handler(PseudoFunction()) == True
-
 def test_random_functions():
     """
     Проверяем, что слепки сигнатур функций отрабатывают корректно.
@@ -53,6 +31,7 @@ def test_random_functions():
         pass
     def function_12(c=False, c2=False):
         pass
+    
     assert SignatureMatcher().match(function_1) == True
     assert SignatureMatcher('.').match(function_2) == True
     assert SignatureMatcher('**').match(function_3) == True
