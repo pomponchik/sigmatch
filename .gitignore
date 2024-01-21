@@ -1,0 +1,13 @@
+venv
+.pytest_cache
+*.egg-info
+build
+dist
+__pycache__
+.idea
+test.py
+.mypy_cache
+.ruff_cache
+.DS_Store
+.ipynb_checkpoints
+.coverage
