@@ -31,7 +31,7 @@ class SignatureMatcher:
         self.number_of_named_args = len([x for x in args if x.isidentifier()])
         self.names_of_named_args = list(set([x for x in args if x.isidentifier()]))
 
-    def match(self, function: Callable[..., Any]) -> bool:
+    def match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         """
         Проверяем, что сигнатура функции, переданной в качестве аргумента, соответствует "слепку", полученному при инициализации объекта SignatureMatcher.
         """
