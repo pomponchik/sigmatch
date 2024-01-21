@@ -1,5 +1,5 @@
 from inspect import Signature, Parameter
-from typing import Callable, List, Any
+from typing import Callable, List, Any, Union
 
 
 class SignatureMatcher:
@@ -40,12 +40,14 @@ class SignatureMatcher:
 
         signature = Signature.from_callable(function)
         parameters = list(signature.parameters.values())
-        result = True
+
+        result: Union[bool, int] = True
         result *= self.prove_is_args(parameters)
         result *= self.prove_is_kwargs(parameters)
         result *= self.prove_number_of_position_args(parameters)
         result *= self.prove_number_of_named_args(parameters)
         result *= self.prove_names_of_named_args(parameters)
+
         return bool(result)
 
     def prove_is_args(self, parameters: List[Parameter]) -> bool:
@@ -77,7 +79,9 @@ class SignatureMatcher:
         Проверка, что имена именованных аргументов совпадают с ожидаемыми.
         """
         names_of_parameters = [parameter.name for parameter in parameters if (parameter.kind == parameter.KEYWORD_ONLY or parameter.kind == parameter.POSITIONAL_OR_KEYWORD) and parameter.default != parameter.empty]
-        result = True
+
+        result: Union[bool, int] = True
         for name in self.names_of_named_args:
             result *= (name in names_of_parameters)
-        return result
+
+        return bool(result)
