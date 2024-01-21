@@ -38,9 +38,7 @@ class SignatureMatcher:
         self.names_of_named_args = list(set([x for x in args if x.isidentifier()]))
 
     def match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
-        """
-        Проверяем, что сигнатура функции, переданной в качестве аргумента, соответствует "слепку", полученному при инициализации объекта SignatureMatcher.
-        """
+        """We check that the signature of the function passed as an argument corresponds to the "cast" obtained during initialization of the SignatureMatcher object."""
         if not callable(function):
             if raise_exception:
                 raise ValueError('It is impossible to determine the signature of an object that is not being callable.')
@@ -62,33 +60,23 @@ class SignatureMatcher:
         return result
 
     def prove_is_args(self, parameters: List[Parameter]) -> bool:
-        """
-        Проверка наличия распаковки позиционных аргументов.
-        """
+        """Checking for unpacking of positional arguments."""
         return self.is_args == bool(len([parameter for parameter in parameters if parameter.kind == parameter.VAR_POSITIONAL]))
 
     def prove_is_kwargs(self, parameters: List[Parameter]) -> bool:
-        """
-        Проверка наличия распаковки именованных аргументов.
-        """
+        """Checking for unpacking of named arguments."""
         return self.is_kwargs == bool(len([parameter for parameter in parameters if parameter.kind == parameter.VAR_KEYWORD]))
 
     def prove_number_of_position_args(self, parameters: List[Parameter]) -> bool:
-        """
-        Проверка, что количество позиционных аргументов совпадает с ожидаемым.
-        """
+        """Checking that the number of positional arguments matches the expected one."""
         return self.number_of_position_args == len([parameter for parameter in parameters if (parameter.kind == parameter.POSITIONAL_ONLY or parameter.kind == parameter.POSITIONAL_OR_KEYWORD) and parameter.default == parameter.empty])
 
     def prove_number_of_named_args(self, parameters: List[Parameter]) -> bool:
-        """
-        Проверка количества именованных аргументов.
-        """
+        """Checking the number of named arguments."""
         return self.number_of_named_args == len([parameter for parameter in parameters if (parameter.kind == parameter.KEYWORD_ONLY or parameter.kind == parameter.POSITIONAL_OR_KEYWORD) and parameter.default != parameter.empty])
 
     def prove_names_of_named_args(self, parameters: List[Parameter]) -> bool:
-        """
-        Проверка, что имена именованных аргументов совпадают с ожидаемыми.
-        """
+        """Checking that the names of the named arguments match the expected ones."""
         names_of_parameters = [parameter.name for parameter in parameters if (parameter.kind == parameter.KEYWORD_ONLY or parameter.kind == parameter.POSITIONAL_OR_KEYWORD) and parameter.default != parameter.empty]
 
         result: Union[bool, int] = True
