@@ -4,25 +4,28 @@ from typing import Callable, List, Any, Union
 
 class SignatureMatcher:
     """
-    Объект данного класса содержит в себе "слепок" ожидаемой сигнатуры вызываемого объекта.
-    Его затем можно "прикладывать" к реальным вызываемым объектам (см. метод .match()), чтобы понять, соответствуют ли их сигнатуры ожидаемой.
+    An object of this class contains a "cast" of the expected signature of the called object.
+    It can then be applied to the actual called object (by the .match() method) to see if their signatures match the expected one.
     """
 
     def __init__(self, *args: str) -> None:
         """
-        Инициализация объекта - это создание "слепка" ожидаемой сигнатуры функций.
+        Initializing an object is creating a "cast" of the expected function signature.
 
-        В качестве аргументов принимаются 4 типа объектов (они все являются строками):
-        1. '.' - соответствует обыкновенному позиционному аргументу без дефолтного значения.
-        2. 'some_argument_name' - соответствует аргументу с дефолтным значением. Содержание строки - имя аргумента.
-        3. '*' - соответствует запаковке нескольких позиционных аргументов без дефолтных значений (*args).
-        4. '**' - соответствует запаковке нескольких именованных аргументов с дефолтными значениями (**kwargs).
+        4 types of objects are accepted as arguments (they are all strings):
 
-        К примеру, функции, озаглавленной вот так:
+        1. '.' - corresponds to an ordinary positional argument without a default value.
+        2. 'some_argument_name' - corresponds to an argument with a default value. The content of the string is the name of the argument.
+        3. '*' - corresponds to packing multiple positional arguments without default values (*args).
+        4. '**' - corresponds to packing several named arguments with default values (**kwargs).
+
+        For example, for a function titled like this:
+
         def func(a, b, c=5, *d, **e):
             ...
 
-        ... будет соответствовать такой "слепок":
+        ... such a "cast" will match:
+
         SignatureMatcher('.', '.', 'c', '*', '**')
         """
         self.is_args = '*' in args
