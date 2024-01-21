@@ -1,6 +1,8 @@
 from inspect import Signature, Parameter
 from typing import Callable, List, Any, Union
 
+from sigmatch.errors import SignatureMismatchError
+
 
 class SignatureMatcher:
     """
@@ -28,6 +30,7 @@ class SignatureMatcher:
 
         SignatureMatcher('.', '.', 'c', '*', '**')
         """
+        self.expected_signature = args
         self.is_args = '*' in args
         self.is_kwargs = '**' in args
         self.number_of_position_args = len([x for x in args if x == '.'])
@@ -39,7 +42,9 @@ class SignatureMatcher:
         Проверяем, что сигнатура функции, переданной в качестве аргумента, соответствует "слепку", полученному при инициализации объекта SignatureMatcher.
         """
         if not callable(function):
-            raise ValueError('It is impossible to determine the signature of an object that is not being callable.')
+            if raise_exception:
+                raise ValueError('It is impossible to determine the signature of an object that is not being callable.')
+            return False
 
         signature = Signature.from_callable(function)
         parameters = list(signature.parameters.values())
@@ -50,8 +55,11 @@ class SignatureMatcher:
         result *= self.prove_number_of_position_args(parameters)
         result *= self.prove_number_of_named_args(parameters)
         result *= self.prove_names_of_named_args(parameters)
+        result = bool(result)
 
-        return bool(result)
+        if not result and raise_exception:
+            raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
+        return result
 
     def prove_is_args(self, parameters: List[Parameter]) -> bool:
         """

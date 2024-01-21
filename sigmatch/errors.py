@@ -1,0 +1,2 @@
+class SignatureMismatchError(Exception):
+    pass
