@@ -1,12 +1,9 @@
 import pytest
 
-from sigmatch import SignatureMatcher
+from sigmatch import SignatureMatcher, SignatureMismatchError
 
 
 def test_random_functions():
-    """
-    Проверяем, что слепки сигнатур функций отрабатывают корректно.
-    """
     def function_1():
         pass
     def function_2(arg):
@@ -52,9 +49,6 @@ def test_random_functions():
 
 
 def test_random_async_functions():
-    """
-    Проверяем, что слепки сигнатур функций отрабатывают корректно.
-    """
     async def function_1():
         pass
     async def function_2(arg):
@@ -95,9 +89,6 @@ def test_random_async_functions():
 
 
 def test_random_wrong_functions():
-    """
-    Проверяем, что слепки сигнатур функций с неподходящими функциями не матчатся.
-    """
     def function_1():
         pass
     def function_2(arg):
@@ -138,9 +129,6 @@ def test_random_wrong_functions():
 
 
 def test_random_wrong_async_functions():
-    """
-    Проверяем, что слепки сигнатур функций с неподходящими функциями не матчатся.
-    """
     async def function_1():
         pass
     async def function_2(arg):
@@ -269,3 +257,35 @@ def test_random_generator_functions():
     assert SignatureMatcher('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
     assert SignatureMatcher('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
     assert SignatureMatcher('c', 'c2').match(function_12) == True
+
+
+def test_raise_exception_if_not_callable():
+    with pytest.raises(ValueError, match='It is impossible to determine the signature of an object that is not being callable.'):
+        SignatureMatcher().match('kek', raise_exception=True)
+
+
+@pytest.mark.parametrize(
+    'options',
+    [
+        {},
+        {'raise_exception': False},
+    ],
+)
+def test_not_raise_exception_if_not_callable(options):
+    assert SignatureMatcher().match('kek', **options) == False
+
+
+def test_raise_exception_if_dismatch():
+    with pytest.raises(SignatureMismatchError):
+        SignatureMatcher().match(lambda x: None, raise_exception=True)
+
+
+@pytest.mark.parametrize(
+    'options',
+    [
+        {},
+        {'raise_exception': False},
+    ],
+)
+def test_not_raise_exception_if_dismatch_and_flag_is_false(options):
+    assert SignatureMatcher().match(lambda x: None, **options) == False
