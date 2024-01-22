@@ -289,3 +289,12 @@ def test_raise_exception_if_dismatch():
 )
 def test_not_raise_exception_if_dismatch_and_flag_is_false(options):
     assert SignatureMatcher().match(lambda x: None, **options) == False
+
+
+def test_it_works_with_class_based_callables():
+    class LocalCallable:
+        def __call__(self):
+            pass
+
+    assert SignatureMatcher().match(LocalCallable)
+    assert not SignatureMatcher('.').match(LocalCallable)
