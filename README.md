@@ -1,4 +1,4 @@
-# sigmatch
+# sigmatch: check function signatures
 
 [![Downloads](https://static.pepy.tech/badge/sigmatch/month)](https://pepy.tech/project/sigmatch)
 [![Downloads](https://static.pepy.tech/badge/sigmatch)](https://pepy.tech/project/sigmatch)
