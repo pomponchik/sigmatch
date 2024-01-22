@@ -10,3 +10,14 @@
 [![PyPI version](https://badge.fury.io/py/sigmatch.svg)](https://badge.fury.io/py/sigmatch)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
+
+This small library allows you to quickly check whether any called object matches the signature you expect. This may be useful to you, for example, if you write libraries that work with callbacks.
+
+Install it:
+
+```bash
+pip install sigmatch
+```
+
+To check the signatures of the callable objects, you need to create a `SignatureMatcher` object, which will "bake" a description of the parameters you expect.
