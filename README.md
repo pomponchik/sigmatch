@@ -39,7 +39,7 @@ matcher = SignatureMatcher('.', '.', 'c', '*', '**')
 print(matcher.match(function))  # True
 ```
 
-The `match()` method works with both regular and coroutine functions, as well as with lambdas, generators, classes, and many other callable objects. By default, the `match()` method returns a boolean value, but you can ask the library to immediately raise an exception if the function does not have the signature you need:
+The `match()` method works with both regular and coroutine functions, as well as with lambdas, generators, classes, methods, and many other callable objects. By default, the `match()` method returns a boolean value, but you can ask the library to immediately raise an exception if the function does not have the signature you need:
 
 ```python
 matcher.match(function, raise_exception=True)
@@ -53,5 +53,5 @@ from sigmatch import SignatureMatcher, SignatureMismatchError
 try:
     SignatureMatcher('.').match(lambda: None, raise_exception=True)
 except SignatureMismatchError:
-    print('Deal with it (⌐■_■)')
+    print('Deal with it (⌐■_■)')  # It'll be printed.
 ```
