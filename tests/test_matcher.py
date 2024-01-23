@@ -298,3 +298,20 @@ def test_it_works_with_class_based_callables():
 
     assert SignatureMatcher().match(LocalCallable)
     assert not SignatureMatcher('.').match(LocalCallable)
+
+
+def test_empty_class_as_callable():
+    class Kek:
+        pass
+
+    assert SignatureMatcher().match(Kek)
+    assert not SignatureMatcher('.').match(Kek)
+
+
+def test_class_with_init_as_callable():
+    class Kek:
+        def __init__(self, a, b, c):
+            pass
+
+    assert SignatureMatcher('.', '.', '.').match(Kek)
+    assert not SignatureMatcher().match(Kek)
