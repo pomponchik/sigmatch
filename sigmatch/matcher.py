@@ -1,5 +1,5 @@
 from inspect import Signature, Parameter
-from typing import Callable, List, Any, Union
+from typing import Callable, Tuple, List, Any, Union
 
 from sigmatch.errors import SignatureMismatchError
 
@@ -30,6 +30,7 @@ class SignatureMatcher:
 
         SignatureMatcher('.', '.', 'c', '*', '**')
         """
+        self.check_expected_signature(args)
         self.expected_signature = args
         self.is_args = '*' in args
         self.is_kwargs = '**' in args
@@ -58,6 +59,40 @@ class SignatureMatcher:
         if not result and raise_exception:
             raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
         return result
+
+    def check_expected_signature(self, expected_signature: Tuple[str]) -> None:
+        meet_dot = False
+        meet_name = False
+        meet_star = False
+        meet_double_star = False
+
+        for item in expected_signature:
+            if not isinstance(item, str):
+                raise TypeError(f'Only strings can be used as symbolic representation of function parameters. You used "{item}" ({type(item).__name__}).')
+            if not item.isidentifier() and item not in ('.', '*', '**'):
+                raise ValueError(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "{item}".')
+
+            if item == '.':
+                meet_dot = True
+                if meet_name or meet_star or meet_double_star:
+                    raise ValueError()
+
+            elif item.isidentifier():
+                meet_name = True
+                if meet_star or meet_double_star:
+                    raise ValueError()
+
+            elif item == '*':
+                if meet_star:
+                    raise ValueError()
+                meet_star = True
+                if meet_double_star:
+                    raise ValueError()
+
+            elif item == '**':
+                if meet_double_star:
+                    raise ValueError()
+                meet_double_star = True
 
     def prove_is_args(self, parameters: List[Parameter]) -> bool:
         """Checking for unpacking of positional arguments."""

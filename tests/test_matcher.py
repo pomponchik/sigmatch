@@ -1,3 +1,5 @@
+import re
+
 import pytest
 
 from sigmatch import SignatureMatcher, SignatureMismatchError
@@ -333,3 +335,13 @@ def test_check_method():
 
     assert SignatureMatcher('.', '.', '.').match(Kek().kek)
     assert not SignatureMatcher().match(Kek().kek)
+
+
+def test_if_parameter_is_not_string():
+    with pytest.raises(TypeError, match=re.escape('Only strings can be used as symbolic representation of function parameters. You used "1" (int).')):
+        SignatureMatcher('.', 1, '.')
+
+
+def test_bad_string_as_parameter():
+    with pytest.raises(ValueError, match=re.escape('Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "   ".')):
+        SignatureMatcher('.', '   ')
