@@ -324,3 +324,12 @@ def test_class_with_call_dunder_object_is_callable():
 
     assert SignatureMatcher('.', '.', '.').match(Kek())
     assert not SignatureMatcher().match(Kek())
+
+
+def test_check_method():
+    class Kek:
+        def kek(self, a, b, c):
+            pass
+
+    assert SignatureMatcher('.', '.', '.').match(Kek().kek)
+    assert not SignatureMatcher().match(Kek().kek)
