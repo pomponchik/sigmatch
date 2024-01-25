@@ -345,3 +345,14 @@ def test_if_parameter_is_not_string():
 def test_bad_string_as_parameter():
     with pytest.raises(ValueError, match=re.escape('Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "   ".')):
         SignatureMatcher('.', '   ')
+
+
+def test_order_dot_after_another():
+    with pytest.raises(ValueError, match='Positional arguments must be specified first.'):
+        SignatureMatcher('kek', '.')
+
+    with pytest.raises(ValueError, match='Positional arguments must be specified first.'):
+        SignatureMatcher('*', '.')
+
+    with pytest.raises(ValueError, match='Positional arguments must be specified first.'):
+        SignatureMatcher('**', '.')
