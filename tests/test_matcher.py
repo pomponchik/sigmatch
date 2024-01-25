@@ -347,12 +347,22 @@ def test_bad_string_as_parameter():
         SignatureMatcher('.', '   ')
 
 
-def test_order_dot_after_another():
-    with pytest.raises(ValueError, match='Positional arguments must be specified first.'):
-        SignatureMatcher('kek', '.')
+@pytest.mark.parametrize(
+    'before,after,message',
+    [
+        ('kek', '.', 'Positional arguments must be specified first.'),
+        ('*', '.', 'Positional arguments must be specified first.'),
+        ('**', '.', 'Positional arguments must be specified first.'),
 
-    with pytest.raises(ValueError, match='Positional arguments must be specified first.'):
-        SignatureMatcher('*', '.')
+        ('*', 'kek', 'Keyword arguments can be specified after positional ones, but before unpacking.'),
+        ('**', 'kek', 'Keyword arguments can be specified after positional ones, but before unpacking.'),
 
-    with pytest.raises(ValueError, match='Positional arguments must be specified first.'):
-        SignatureMatcher('**', '.')
+        ('**', '*', 'Unpacking positional arguments should go before unpacking keyword arguments.'),
+
+        ('*', '*', 'Unpacking of the same type (*args in this case) can be specified no more than once.'),
+        ('**', '**', 'Unpacking of the same type (**kwargs in this case) can be specified no more than once.'),
+    ],
+)
+def test_wrong_order(before, message, after):
+    with pytest.raises(ValueError, match=re.escape(message)):
+        SignatureMatcher(before, after)
