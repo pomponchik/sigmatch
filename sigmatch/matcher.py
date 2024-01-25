@@ -30,13 +30,30 @@ class SignatureMatcher:
 
         SignatureMatcher('.', '.', 'c', '*', '**')
         """
-        self.check_expected_signature(args)
-        self.expected_signature = args
-        self.is_args = '*' in args
-        self.is_kwargs = '**' in args
-        self.number_of_position_args = len([x for x in args if x == '.'])
-        self.number_of_named_args = len([x for x in args if x.isidentifier()])
-        self.names_of_named_args = list(set([x for x in args if x.isidentifier()]))
+        for item in args:
+            if not isinstance(item, str):
+                raise TypeError(f'Only strings can be used as symbolic representation of function parameters. You used "{item}" ({type(item).__name__}).')
+
+        symbols = self.convert_symbols(args)
+
+        self.check_expected_signature(symbols)
+        self.expected_signature = symbols
+        self.is_args = '*' in symbols
+        self.is_kwargs = '**' in symbols
+        self.number_of_position_args = len([x for x in symbols if x == '.'])
+        self.number_of_named_args = len([x for x in symbols if x.isidentifier()])
+        self.names_of_named_args = list(set([x for x in symbols if x.isidentifier()]))
+
+    def __repr__(self) -> str:
+        positional_args = ''.join(['.' for x in range(self.number_of_position_args)])
+        named_args = ', '.join([x for x in self.expected_signature if x.isidentifier()])
+        star = '*' if self.is_args else ''
+        double_star = '**' if self.is_kwargs else ''
+
+        content = ', '.join([x for x in (positional_args, named_args, star, double_star) if x])
+        quoted_content = f'"{content}"' if content else ''
+
+        return f'{type(self).__name__}({quoted_content})'
 
     def match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         """We check that the signature of the function passed as an argument corresponds to the "cast" obtained during initialization of the SignatureMatcher object."""
@@ -60,15 +77,28 @@ class SignatureMatcher:
             raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
         return result
 
-    def check_expected_signature(self, expected_signature: Tuple[str, ...]) -> None:
+    def convert_symbols(self, args: Tuple[str, ...]) -> List[str]:
+        result = []
+
+        for item in args:
+            splitted_item = item.split(',')
+            for chunk in splitted_item:
+                stripped_chunk = chunk.strip()
+                if stripped_chunk and all(x=='.' for x in stripped_chunk):
+                    for dot in stripped_chunk:
+                        result.append(dot)
+                else:
+                    result.append(stripped_chunk)
+
+        return result
+
+    def check_expected_signature(self, expected_signature: List[str]) -> None:
         met_name = False
         met_star = False
         met_double_star = False
         all_met_names = set()
 
         for item in expected_signature:
-            if not isinstance(item, str):
-                raise TypeError(f'Only strings can be used as symbolic representation of function parameters. You used "{item}" ({type(item).__name__}).')
             if not item.isidentifier() and item not in ('.', '*', '**'):
                 raise ValueError(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "{item}".')
 

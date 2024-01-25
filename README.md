@@ -39,6 +39,12 @@ matcher = SignatureMatcher('.', '.', 'c', '*', '**')
 print(matcher.match(function))  # True
 ```
 
+You can also pass all the expected arguments as a single line, separated by commas. Positional arguments do not have to be separated, they can be presented as a fused set of dots. See:
+
+```python
+matcher = SignatureMatcher('.., c, *, **')
+```
+
 The `match()` method works with both regular and coroutine functions, as well as with lambdas, generators, classes, methods, and many other callable objects. By default, the `match()` method returns a boolean value, but you can ask the library to immediately raise an exception if the function does not have the signature you need:
 
 ```python
