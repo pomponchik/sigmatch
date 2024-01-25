@@ -407,3 +407,17 @@ def test_wrong_order(before, message, after):
 )
 def test_strings_with_multiple_items(input, output):
     assert SignatureMatcher(*input).expected_signature == output
+
+
+def test_repr():
+    assert repr(SignatureMatcher()) == 'SignatureMatcher()'
+    assert repr(SignatureMatcher('.')) == 'SignatureMatcher(".")'
+    assert repr(SignatureMatcher('...')) == 'SignatureMatcher("...")'
+    assert repr(SignatureMatcher('..., kek')) == 'SignatureMatcher("..., kek")'
+    assert repr(SignatureMatcher('kek')) == 'SignatureMatcher("kek")'
+    assert repr(SignatureMatcher('kek, lol')) == 'SignatureMatcher("kek, lol")'
+    assert repr(SignatureMatcher('kek, lol, *')) == 'SignatureMatcher("kek, lol, *")'
+    assert repr(SignatureMatcher('*')) == 'SignatureMatcher("*")'
+    assert repr(SignatureMatcher('*, **')) == 'SignatureMatcher("*, **")'
+    assert repr(SignatureMatcher('**')) == 'SignatureMatcher("**")'
+    assert repr(SignatureMatcher('..., kek, *, **')) == 'SignatureMatcher("..., kek, *, **")'

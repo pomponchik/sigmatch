@@ -44,6 +44,17 @@ class SignatureMatcher:
         self.number_of_named_args = len([x for x in symbols if x.isidentifier()])
         self.names_of_named_args = list(set([x for x in symbols if x.isidentifier()]))
 
+    def __repr__(self):
+        positional_args = ''.join(['.' for x in range(self.number_of_position_args)])
+        named_args = ', '.join([x for x in self.expected_signature if x.isidentifier()])
+        star = '*' if self.is_args else ''
+        double_star = '**' if self.is_kwargs else ''
+
+        content = ', '.join([x for x in (positional_args, named_args, star, double_star) if x])
+        quoted_content = f'"{content}"' if content else ''
+
+        return f'{type(self).__name__}({quoted_content})'
+
     def match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         """We check that the signature of the function passed as an argument corresponds to the "cast" obtained during initialization of the SignatureMatcher object."""
         if not callable(function):
