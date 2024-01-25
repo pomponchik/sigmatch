@@ -27,7 +27,7 @@ Now to check the signatures of the callable objects, you need to create a `Signa
 - `"*"` - corresponds to packing multiple positional arguments without default values (*args).
 - `"**"` - corresponds to packing several named arguments with default values (**kwargs).
 
-When you have prepared a `SignatureMatcher` object, you can apply it to function objects and get a response (`True`/`False`) whether their signatures match the expected ones. As an example, see what a function and a `SignatureMatcher` object for it mights look like:
+Note that the arguments can only go in this order, that is, you cannot specify the packing before the positional argument, otherwise you will get an `IncorrectArgumentsOrderError`. When you have prepared a `SignatureMatcher` object, you can apply it to function objects and get a response (`True`/`False`) whether their signatures match the expected ones. As an example, see what a function and a `SignatureMatcher` object for it mights look like:
 
 ```python
 from sigmatch import SignatureMatcher
