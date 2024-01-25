@@ -61,7 +61,6 @@ class SignatureMatcher:
         return result
 
     def check_expected_signature(self, expected_signature: Tuple[str, ...]) -> None:
-        meet_dot = False
         meet_name = False
         meet_star = False
         meet_double_star = False
@@ -73,7 +72,6 @@ class SignatureMatcher:
                 raise ValueError(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "{item}".')
 
             if item == '.':
-                meet_dot = True
                 if meet_name or meet_star or meet_double_star:
                     raise ValueError('Positional arguments must be specified first.')
 
