@@ -421,3 +421,15 @@ def test_repr():
     assert repr(SignatureMatcher('*, **')) == 'SignatureMatcher("*, **")'
     assert repr(SignatureMatcher('**')) == 'SignatureMatcher("**")'
     assert repr(SignatureMatcher('..., kek, *, **')) == 'SignatureMatcher("..., kek, *, **")'
+
+
+def test_eq():
+    assert SignatureMatcher() == SignatureMatcher()
+    assert SignatureMatcher('.') == SignatureMatcher('.')
+    assert SignatureMatcher('..., kek, *, **') == SignatureMatcher('..., kek, *, **')
+    assert SignatureMatcher('..., kek, *, **') == SignatureMatcher('...', 'kek', '*', '**')
+
+    assert not (SignatureMatcher('.') == SignatureMatcher())
+    assert not (SignatureMatcher('..., kek, *, **') == SignatureMatcher('...', 'kek', '*'))
+    assert not (SignatureMatcher('.') == 5)
+    assert not (SignatureMatcher('.') == 'kek')

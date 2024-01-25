@@ -55,6 +55,12 @@ class SignatureMatcher:
 
         return f'{type(self).__name__}({quoted_content})'
 
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, type(self)):
+            return False
+
+        return self.expected_signature == other.expected_signature
+
     def match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         """We check that the signature of the function passed as an argument corresponds to the "cast" obtained during initialization of the SignatureMatcher object."""
         if not callable(function):
