@@ -2,7 +2,7 @@ import re
 
 import pytest
 
-from sigmatch import SignatureMatcher, SignatureMismatchError
+from sigmatch import SignatureMatcher, SignatureMismatchError, IncorrectArgumentsOrderError
 
 
 def test_random_functions():
@@ -366,5 +366,5 @@ def test_bad_string_as_parameter():
     ],
 )
 def test_wrong_order(before, message, after):
-    with pytest.raises(ValueError, match=re.escape(message)):
+    with pytest.raises(IncorrectArgumentsOrderError, match=re.escape(message)):
         SignatureMatcher(before, after)

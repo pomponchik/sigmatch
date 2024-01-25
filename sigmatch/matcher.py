@@ -1,7 +1,7 @@
 from inspect import Signature, Parameter
 from typing import Callable, Tuple, List, Any, Union
 
-from sigmatch.errors import SignatureMismatchError
+from sigmatch.errors import SignatureMismatchError, IncorrectArgumentsOrderError
 
 
 class SignatureMatcher:
@@ -74,26 +74,26 @@ class SignatureMatcher:
 
             if item == '.':
                 if met_name or met_star or met_double_star:
-                    raise ValueError('Positional arguments must be specified first.')
+                    raise IncorrectArgumentsOrderError('Positional arguments must be specified first.')
 
             elif item.isidentifier():
                 met_name = True
                 if met_star or met_double_star:
-                    raise ValueError('Keyword arguments can be specified after positional ones, but before unpacking.')
+                    raise IncorrectArgumentsOrderError('Keyword arguments can be specified after positional ones, but before unpacking.')
                 if item in all_met_names:
-                    raise ValueError(f'The same argument name cannot occur twice. You have a repeat of "{item}".')
+                    raise IncorrectArgumentsOrderError(f'The same argument name cannot occur twice. You have a repeat of "{item}".')
                 all_met_names.add(item)
 
             elif item == '*':
                 if met_star:
-                    raise ValueError('Unpacking of the same type (*args in this case) can be specified no more than once.')
+                    raise IncorrectArgumentsOrderError('Unpacking of the same type (*args in this case) can be specified no more than once.')
                 met_star = True
                 if met_double_star:
-                    raise ValueError('Unpacking positional arguments should go before unpacking keyword arguments.')
+                    raise IncorrectArgumentsOrderError('Unpacking positional arguments should go before unpacking keyword arguments.')
 
             elif item == '**':
                 if met_double_star:
-                    raise ValueError('Unpacking of the same type (**kwargs in this case) can be specified no more than once.')
+                    raise IncorrectArgumentsOrderError('Unpacking of the same type (**kwargs in this case) can be specified no more than once.')
                 met_double_star = True
 
     def prove_is_args(self, parameters: List[Parameter]) -> bool:
