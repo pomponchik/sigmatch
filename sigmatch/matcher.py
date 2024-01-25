@@ -75,23 +75,23 @@ class SignatureMatcher:
             if item == '.':
                 meet_dot = True
                 if meet_name or meet_star or meet_double_star:
-                    raise ValueError()
+                    raise ValueError('Positional arguments must be specified first.')
 
             elif item.isidentifier():
                 meet_name = True
                 if meet_star or meet_double_star:
-                    raise ValueError()
+                    raise ValueError('Keyword arguments can be specified after positional ones, but before unpacking.')
 
             elif item == '*':
                 if meet_star:
-                    raise ValueError()
+                    raise ValueError('Unpacking of the same type (*args in this case) can be specified no more than once.')
                 meet_star = True
                 if meet_double_star:
-                    raise ValueError()
+                    raise ValueError('Unpacking positional arguments should go before unpacking keyword arguments.')
 
             elif item == '**':
                 if meet_double_star:
-                    raise ValueError()
+                    raise ValueError('Unpacking of the same type (**kwargs in this case) can be specified no more than once.')
                 meet_double_star = True
 
     def prove_is_args(self, parameters: List[Parameter]) -> bool:
