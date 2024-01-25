@@ -351,8 +351,8 @@ def test_bad_string_with_spaces_as_parameter():
     'bad_string', [
         '88',
         '/',
-        '..',
-        '...',
+        '$',
+        'keko kek',
     ]
 )
 def test_other_bad_string_as_parameter(bad_string):

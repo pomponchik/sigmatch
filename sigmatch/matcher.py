@@ -72,7 +72,12 @@ class SignatureMatcher:
         for item in args:
             splitted_item = item.split(',')
             for chunk in splitted_item:
-                result.append(chunk.strip())
+                stripped_chunk = chunk.strip()
+                if stripped_chunk and all(x=='.' for x in stripped_chunk):
+                    for dot in stripped_chunk:
+                        result.append(dot)
+                else:
+                    result.append(stripped_chunk)
 
         return result
 
