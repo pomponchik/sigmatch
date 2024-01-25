@@ -60,7 +60,7 @@ class SignatureMatcher:
             raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
         return result
 
-    def check_expected_signature(self, expected_signature: Tuple[str]) -> None:
+    def check_expected_signature(self, expected_signature: Tuple[str, ...]) -> None:
         meet_dot = False
         meet_name = False
         meet_star = False
