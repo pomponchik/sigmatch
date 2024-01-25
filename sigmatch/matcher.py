@@ -44,7 +44,7 @@ class SignatureMatcher:
         self.number_of_named_args = len([x for x in symbols if x.isidentifier()])
         self.names_of_named_args = list(set([x for x in symbols if x.isidentifier()]))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         positional_args = ''.join(['.' for x in range(self.number_of_position_args)])
         named_args = ', '.join([x for x in self.expected_signature if x.isidentifier()])
         star = '*' if self.is_args else ''
