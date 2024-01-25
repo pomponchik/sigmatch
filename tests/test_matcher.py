@@ -1,6 +1,8 @@
+import re
+
 import pytest
 
-from sigmatch import SignatureMatcher, SignatureMismatchError
+from sigmatch import SignatureMatcher, SignatureMismatchError, IncorrectArgumentsOrderError
 
 
 def test_random_functions():
@@ -324,3 +326,45 @@ def test_class_with_call_dunder_object_is_callable():
 
     assert SignatureMatcher('.', '.', '.').match(Kek())
     assert not SignatureMatcher().match(Kek())
+
+
+def test_check_method():
+    class Kek:
+        def kek(self, a, b, c):
+            pass
+
+    assert SignatureMatcher('.', '.', '.').match(Kek().kek)
+    assert not SignatureMatcher().match(Kek().kek)
+
+
+def test_if_parameter_is_not_string():
+    with pytest.raises(TypeError, match=re.escape('Only strings can be used as symbolic representation of function parameters. You used "1" (int).')):
+        SignatureMatcher('.', 1, '.')
+
+
+def test_bad_string_as_parameter():
+    with pytest.raises(ValueError, match=re.escape('Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "   ".')):
+        SignatureMatcher('.', '   ')
+
+
+@pytest.mark.parametrize(
+    'before,after,message',
+    [
+        ('kek', '.', 'Positional arguments must be specified first.'),
+        ('*', '.', 'Positional arguments must be specified first.'),
+        ('**', '.', 'Positional arguments must be specified first.'),
+
+        ('*', 'kek', 'Keyword arguments can be specified after positional ones, but before unpacking.'),
+        ('**', 'kek', 'Keyword arguments can be specified after positional ones, but before unpacking.'),
+
+        ('**', '*', 'Unpacking positional arguments should go before unpacking keyword arguments.'),
+
+        ('*', '*', 'Unpacking of the same type (*args in this case) can be specified no more than once.'),
+        ('**', '**', 'Unpacking of the same type (**kwargs in this case) can be specified no more than once.'),
+
+        ('kek', 'kek', 'The same argument name cannot occur twice. You have a repeat of "kek".'),
+    ],
+)
+def test_wrong_order(before, message, after):
+    with pytest.raises(IncorrectArgumentsOrderError, match=re.escape(message)):
+        SignatureMatcher(before, after)

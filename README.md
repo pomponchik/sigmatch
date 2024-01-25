@@ -27,7 +27,7 @@ Now to check the signatures of the callable objects, you need to create a `Signa
 - `"*"` - corresponds to packing multiple positional arguments without default values (*args).
 - `"**"` - corresponds to packing several named arguments with default values (**kwargs).
 
-When you have prepared a `SignatureMatcher` object, you can apply it to function objects and get a response (`True`/`False`) whether their signatures match the expected ones. As an example, see what a function and a `SignatureMatcher` object for it mights look like:
+Note that the arguments can only go in this order, that is, you cannot specify the packing before the positional argument, otherwise you will get an `IncorrectArgumentsOrderError`. When you have prepared a `SignatureMatcher` object, you can apply it to function objects and get a response (`True`/`False`) whether their signatures match the expected ones. As an example, see what a function and a `SignatureMatcher` object for it mights look like:
 
 ```python
 from sigmatch import SignatureMatcher
@@ -39,7 +39,7 @@ matcher = SignatureMatcher('.', '.', 'c', '*', '**')
 print(matcher.match(function))  # True
 ```
 
-The `match()` method works with both regular and coroutine functions, as well as with lambdas, generators, classes, and many other callable objects. By default, the `match()` method returns a boolean value, but you can ask the library to immediately raise an exception if the function does not have the signature you need:
+The `match()` method works with both regular and coroutine functions, as well as with lambdas, generators, classes, methods, and many other callable objects. By default, the `match()` method returns a boolean value, but you can ask the library to immediately raise an exception if the function does not have the signature you need:
 
 ```python
 matcher.match(function, raise_exception=True)
@@ -53,5 +53,5 @@ from sigmatch import SignatureMatcher, SignatureMismatchError
 try:
     SignatureMatcher('.').match(lambda: None, raise_exception=True)
 except SignatureMismatchError:
-    print('Deal with it (⌐■_■)')
+    print('Deal with it (⌐■_■)')  # It'll be printed.
 ```
