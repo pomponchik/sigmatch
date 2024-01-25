@@ -61,9 +61,10 @@ class SignatureMatcher:
         return result
 
     def check_expected_signature(self, expected_signature: Tuple[str, ...]) -> None:
-        meet_name = False
-        meet_star = False
-        meet_double_star = False
+        met_name = False
+        met_star = False
+        met_double_star = False
+        all_met_names = set()
 
         for item in expected_signature:
             if not isinstance(item, str):
@@ -72,25 +73,28 @@ class SignatureMatcher:
                 raise ValueError(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "{item}".')
 
             if item == '.':
-                if meet_name or meet_star or meet_double_star:
+                if met_name or met_star or met_double_star:
                     raise ValueError('Positional arguments must be specified first.')
 
             elif item.isidentifier():
-                meet_name = True
-                if meet_star or meet_double_star:
+                met_name = True
+                if met_star or met_double_star:
                     raise ValueError('Keyword arguments can be specified after positional ones, but before unpacking.')
+                if item in all_met_names:
+                    raise ValueError(f'The same argument name cannot occur twice. You have a repeat of "{item}".')
+                all_met_names.add(item)
 
             elif item == '*':
-                if meet_star:
+                if met_star:
                     raise ValueError('Unpacking of the same type (*args in this case) can be specified no more than once.')
-                meet_star = True
-                if meet_double_star:
+                met_star = True
+                if met_double_star:
                     raise ValueError('Unpacking positional arguments should go before unpacking keyword arguments.')
 
             elif item == '**':
-                if meet_double_star:
+                if met_double_star:
                     raise ValueError('Unpacking of the same type (**kwargs in this case) can be specified no more than once.')
-                meet_double_star = True
+                met_double_star = True
 
     def prove_is_args(self, parameters: List[Parameter]) -> bool:
         """Checking for unpacking of positional arguments."""
