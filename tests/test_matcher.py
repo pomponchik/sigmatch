@@ -342,9 +342,22 @@ def test_if_parameter_is_not_string():
         SignatureMatcher('.', 1, '.')
 
 
-def test_bad_string_as_parameter():
-    with pytest.raises(ValueError, match=re.escape('Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "   ".')):
+def test_bad_string_with_spaces_as_parameter():
+    with pytest.raises(ValueError, match=re.escape('Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "".')):
         SignatureMatcher('.', '   ')
+
+
+@pytest.mark.parametrize(
+    'bad_string', [
+        '88',
+        '/',
+        '..',
+        '...',
+    ]
+)
+def test_other_bad_string_as_parameter(bad_string):
+    with pytest.raises(ValueError, match=re.escape(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "{bad_string}".')):
+        SignatureMatcher('.', bad_string)
 
 
 @pytest.mark.parametrize(
