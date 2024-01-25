@@ -361,6 +361,8 @@ def test_bad_string_as_parameter():
 
         ('*', '*', 'Unpacking of the same type (*args in this case) can be specified no more than once.'),
         ('**', '**', 'Unpacking of the same type (**kwargs in this case) can be specified no more than once.'),
+
+        ('kek', 'kek', 'The same argument name cannot occur twice. You have a repeat of "kek".'),
     ],
 )
 def test_wrong_order(before, message, after):
